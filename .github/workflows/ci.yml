@@ -8,7 +8,13 @@ on:
       - master
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["1"]
+        arch: ["x64", "x86"]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -17,7 +23,8 @@ jobs:
           if [ "`git rev-parse --abbrev-ref HEAD`" != master ]; then git fetch origin master:master; fi
       - uses: julia-actions/setup-julia@v1
         with:
-          version: 1
+          version: ${{ matrix.version }}
+          arch: ${{ matrix.arch }}
       - uses: actions/cache@v1
         env:
           cache-name: cache-artifacts
